@@ -1,6 +1,7 @@
 # Froncort - Medical Resource Allocation Agent
 
-A multi-agent system that converts natural language queries into SQL for hospital resource management, built with Google's Agent Development Kit (ADK).
+A multi-agent system for hospital resource optimization, enabling administrators to query and allocate resources (beds, oxygen, staff, equipment) using natural language.
+Built with Google’s Agent Development Kit (ADK), it automatically interprets human queries, generates SQL commands, and provides actionable insights.
 
 ## Quick Start
 
@@ -39,15 +40,19 @@ Visit : http://localhost:8000
 ## Problem Approach
 
 ### Challenge
-Healthcare administrators need to query complex hospital databases without SQL expertise. Manual queries are time-consuming, error-prone, and lack contextual insights.
+Hospitals often struggle to manage and allocate resources efficiently — especially during high-demand situations like medical emergencies or pandemics.
+Data is scattered across databases, and manual analysis or SQL queries are slow, technical, and prone to human error.
 
 ### Solution: Multi-Agent Natural Language to SQL System
 
 **Key Capabilities:**
-1. **Natural Language Understanding** - Plain English queries (e.g., "Which hospitals have available ICU beds?")
+1. **Natural Language Understanding** - Converts plain English questions like
+“Which hospitals have fewer than 10 ICU beds available?”
+into accurate, optimized database queries.
 2. **Intelligent SQL Generation** - Auto-analyzes schema, creates optimized queries with joins/aggregations
-3. **Query Validation** - Rewrites ambiguous queries, validates results match intent
-4. **Contextual Responses** - Natural language answers with insights, not raw data
+3. **Query Validation** - Ensures generated queries reflect the user’s intent and hospital schema.
+4. **Intelligent Resource Mapping** – Identifies shortages, surpluses, and transfer possibilities.
+5. **Contextual Responses** - Natural language answers with insights, not raw data
 
 **Workflow:**
 ```
