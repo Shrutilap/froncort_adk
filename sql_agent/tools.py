@@ -11,25 +11,28 @@ from dotenv import load_dotenv
 
 from google.adk.tools.function_tool import FunctionTool
 from langchain_community.utilities import SQLDatabase
-
-
+from .config import DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
+from urllib.parse import quote_plus
 logger = logging.getLogger("chat-api.tools")
 
-try:
-    from .config import (
-        DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DATABASE_URL
-    )
-except ImportError:
-    load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
-    logger.warning("Could not import from .config, loading .env directly.")
-    DB_USER = os.getenv("DB_USER")
-    DB_PASSWORD = quote_plus(os.getenv("DB_PASSWORD", ""))
-    DB_HOST = os.getenv("DB_HOST")
-    DB_NAME = os.getenv("DB_NAME")
-    DATABASE_URL = os.getenv("DATABASE_URL")
+# try:
+#     from .config import (
+#         DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DATABASE_URL
+#     )
+# except ImportError:
+#     load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+#     logger.warning("Could not import from .config, loading .env directly.")
+#     DB_USER = os.getenv("DB_USER")
+#     DB_PASSWORD = quote_plus(os.getenv("DB_PASSWORD", ""))
+#     DB_HOST = os.getenv("DB_HOST")
+#     DB_NAME = os.getenv("DB_NAME")
+#     DATABASE_URL = os.getenv("DATABASE_URL")
 
-connection_uri = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
-logger.info(f"Connecting to external DB: mysql+mysqlconnector://{DB_USER}:*****@{DB_HOST}/{DB_NAME}")
+DB_PASSWORD_ENCODED = quote_plus(DB_PASSWORD)
+
+connection_uri = f"mysql+mysqlconnector://{DB_USER}:{DB_PASSWORD_ENCODED}@{DB_HOST}/{DB_NAME}"
+logger.info(f"Connecting to DB: mysql+mysqlconnector://{DB_USER}:*****@{DB_HOST}/{DB_NAME}")
+
 
 try:
     db = SQLDatabase.from_uri(connection_uri)

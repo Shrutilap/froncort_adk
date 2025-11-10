@@ -1,0 +1,56 @@
+
+# .dockerignore for backend (root directory)
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.db
+*.sqlite
+
+# Virtual Environment
+.venv/
+venv/
+.dep/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Frontend (we don't need this in backend container)
+ui/
+my-react-app/
+
+# Database files (we mount these separately)
+*.sql
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+

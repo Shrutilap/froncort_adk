@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: hospital_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hospital_data
+      MYSQL_USER: hospital_user
+      MYSQL_PASSWORD: hospital_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mock_pune_50_hospitals.sql:/docker-entrypoint-initdb.d/mock_pune_50_hospitals.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hospital_backend
+    environment:
+      - DB_USER=hospital_user
+      - DB_PASSWORD=hospital_pass
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=hospital_data
+      - DATABASE_URL=sqlite:///./my_chatbot_data.db
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_GENAI_USE_VERTEXAI=FALSE
+      - DEBUG=true
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount for live code changes during development
+      - ./main.py:/app/main.py
+      - ./sql_agent:/app/sql_agent
+      # Persist SQLite session database
+      - backend_data:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile.frontend
+    container_name: hospital_frontend
+    environment:
+      - VITE_REACT_APP_FASTAPI_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount for live code changes during development
+      - ./ui/src:/app/src
+      - ./ui/public:/app/public
+      - ./ui/index.html:/app/index.html
+      # Don't mount node_modules (keep container's version)
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+volumes:
+  mysql_data:
+    driver: local
+  backend_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge
